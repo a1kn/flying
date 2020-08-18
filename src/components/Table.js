@@ -2,25 +2,34 @@ import React, { Component } from 'react'
 
 class Table extends Component {
   render() {
-    const row = this.props.routes.map((route) => { return (
-      <tr>
-        <td>{route.airline}</td>
-        <td>{route.src}</td>
-        <td>{route.dest}</td>
-      </tr>
-    )})
+    const header = this.props.columns.map((col) => {
+      return (
+        <th>{col.name}</th>
+      );
+    });
+
+    const displayRows = this.props.rows.map((row) => {
+      const cell = this.props.columns.map((col) => {
+        const value = row[col.property] 
+        return <td>{this.props.format(col.property, value)}</td>
+      })
+
+      return (
+        <tr>
+          {cell}
+        </tr>
+      )
+    });
 
     return (
       <table className='routes-table'>
         <thead>
           <tr>
-            <th>Airline</th>
-            <th>Source</th>
-            <th>Destination</th>
+            {header}
           </tr>
         </thead>
         <tbody>
-          {row}
+          {displayRows}
         </tbody>
       </table>
     );
