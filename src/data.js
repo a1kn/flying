@@ -1403,4 +1403,4 @@ const getAirportByCode = (code) => {
   return airports.find((airport) => airport.code === code).name;
 };
 
-export default {routes, getAirlineById, getAirportByCode};
+export default {routes, airports, airlines, getAirlineById, getAirportByCode};

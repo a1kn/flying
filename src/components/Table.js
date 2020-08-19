@@ -19,9 +19,9 @@ class Table extends Component {
   }
 
   render() {
-    const header = this.props.columns.map((col) => {
+    const displayTableHeader = this.props.columns.map((col) => {
       return (
-        <th>{col.name}</th>
+        <th key={col.name}>{col.name}</th>
       );
     });
 
@@ -29,20 +29,20 @@ class Table extends Component {
 
     const displayRows = this.props.rows.slice(
       routeIdx, (routeIdx + this.props.perPage)
-    ).map((row) => {
+    ).map((row, idx) => {
       const cell = this.props.columns.map((col) => {
         const value = row[col.property] 
-        return <td>{this.props.format(col.property, value)}</td>
+        return <td key={value}>{this.props.format(col.property, value)}</td>
       })
 
       return (
-        <tr>
+        <tr key={idx}>
           {cell}
         </tr>
       )
     });
 
-    const pagination = (
+    const displayPagination = (
       <div className='pagination'>
         <p>
           Showing {routeIdx}-{routeIdx + this.props.perPage} of&nbsp;
@@ -73,14 +73,14 @@ class Table extends Component {
         <table className='routes-table'>
           <thead>
             <tr>
-              {header}
+              {displayTableHeader}
             </tr>
           </thead>
           <tbody>
             {displayRows}
           </tbody>
         </table>
-        {pagination}
+        {displayPagination}
       </div>
     );
   }
