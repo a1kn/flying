@@ -5,18 +5,12 @@ const Filter = ({ options, title, allLabel, selected, onSelect }) => {
 
   const formattedOptions = options.map((option) => {
     const value = option[title]
-    const isDisabled = option.disabled ? true : false; 
-    const count = () => {
-      if (option.count) {
-        return `(${option.count})`
-      } else {
-        return ''
-      }
-    }
+    const isDisabled = option.disabled ? true : false
+    const count = option.count ? `(${option.count})` : ''
 
     return (
       <option key={value} disabled={isDisabled} value={value}>
-        { `${option.name} ${count()}` }
+        { `${option.name} ${count}` }
       </option>
     )
   })
