@@ -59,12 +59,28 @@ class App extends Component {
     });
 
     const filterAirlines = Data.airlines.filter((airline) => {
-      return filterRoutesByAirport.some((route) => route.airline === airline.id)
+      if (filterRoutesByAirport.some((route) => route.airline === airline.id)) {
+        return airline;
+      } else {
+        return {
+          id: airline.id,
+          name: airline.name,
+          disabled: true,
+        }
+      }
     });
 
-    const filterAirports = Data.airports.filter((airport) => {
-      return filterRoutesByAirline.some((route) => route.src === airport.code
-        || route.dest === airport.code)
+    const filterAirports = Data.airports.map((airport) => {
+      if (filterRoutesByAirline.some((route) => route.src === airport.code
+        || route.dest === airport.code)) {
+        return airport;
+      } else {
+        return {
+          name: airport.name,
+          code: airport.code,
+          disabled: true,
+        }
+      }
     });
 
     const selectedRoutes = Data.routes.filter((route) => (

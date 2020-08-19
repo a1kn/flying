@@ -9,8 +9,9 @@ class Filter extends Component {
   render() {
     const options = this.props.options.map((option) => {
       const value = option[this.props.value]
+      const isDisabled = option.disabled ? true : false; 
       return (
-        <option key={value} value={value}>
+        <option key={value} disabled={isDisabled} value={value}>
           { option.name }
         </option>
       )
