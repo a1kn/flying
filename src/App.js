@@ -84,6 +84,7 @@ class App extends Component {
             <Filter 
               options={filterAirlines}
               value='id'
+              selected={this.state.airline}
               onSelect={this.selectAirline}
               default='All Airlines'
             />
@@ -91,6 +92,7 @@ class App extends Component {
             <Filter 
               options={filterAirports}
               value='code'
+              selected={this.state.airport}
               onSelect={this.selectAirport}
               default='All Airports'
             />

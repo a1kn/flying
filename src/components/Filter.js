@@ -19,7 +19,7 @@ class Filter extends Component {
     options.unshift(<option key="all" value="all">{this.props.default}</option>)
 
     return (
-      <select key={this.props.value} onChange={this.handleSelect}>
+      <select value={this.props.selected} onChange={this.handleSelect}>
         {options}
       </select>
     )
