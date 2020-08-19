@@ -3,6 +3,7 @@ import './App.css';
 import Data from './data.js'
 import Table from './components/Table'
 import Filter from './components/Filter'
+import Map from './components/Map'
 
 class App extends Component {
   constructor(props) {
@@ -10,7 +11,23 @@ class App extends Component {
     this.state = {
       airline: 'all',
       airport: 'all',
+      page: 1,
     };
+  }
+
+  prevClick = (e) => {
+    e.preventDefault()  
+    this.setState({page: this.state.page - 1})
+  }
+
+  nextClick = (e) => {
+    e.preventDefault() 
+    this.setState({page: this.state.page + 1})
+  }
+
+  airportClick = (code) => {
+    this.selectAirport(code)
+    this.selectAirline('all')
   }
 
   formatValue(property, value) {
@@ -22,6 +39,8 @@ class App extends Component {
   }
 
   selectAirline = (id) => {
+    this.setState({page: 1})
+
     if (id === 'all') {
       this.setState({airline: 'all'})
     } else {
@@ -30,7 +49,7 @@ class App extends Component {
   }
 
   selectAirport = (code) => {
-    this.setState({airport: code}) 
+    this.setState({airport: code, page: 1}) 
   }
 
   resetFilters = (e) => {
@@ -39,6 +58,15 @@ class App extends Component {
       airline: 'all',
       airport: 'all',
     })
+  }
+
+  sortByName = (a, b) => {
+    if (a.name > b.name) {
+      return 1
+    } else if (b.name > a.name) {
+      return -1
+    }
+    return 0
   }
 
   render() {
@@ -58,9 +86,17 @@ class App extends Component {
         || this.state.airport === 'all'
     });
 
-    const filterAirlines = Data.airlines.filter((airline) => {
-      if (filterRoutesByAirport.some((route) => route.airline === airline.id)) {
-        return airline;
+    const filterAirlines = Data.airlines.map((airline) => {
+      const count = filterRoutesByAirport.filter((route) =>
+        route.airline === airline.id
+      ).length
+
+      if (count > 0) {
+        return {
+          id: airline.id,
+          name: airline.name,
+          count,
+        };
       } else {
         return {
           id: airline.id,
@@ -68,12 +104,19 @@ class App extends Component {
           disabled: true,
         }
       }
-    });
+    }).sort(this.sortByName);
 
     const filterAirports = Data.airports.map((airport) => {
-      if (filterRoutesByAirline.some((route) => route.src === airport.code
-        || route.dest === airport.code)) {
-        return airport;
+      const count = filterRoutesByAirline.filter((route) => 
+        route.src === airport.code || route.dest === airport.code
+      ).length
+
+      if (count > 0) {
+        return {
+          name: airport.name,
+          code: airport.code,
+          count,
+        };
       } else {
         return {
           name: airport.name,
@@ -81,7 +124,7 @@ class App extends Component {
           disabled: true,
         }
       }
-    });
+    }).sort(this.sortByName);
 
     const selectedRoutes = Data.routes.filter((route) => (
       (route.airline === this.state.airline || this.state.airline === 'all')
@@ -92,25 +135,26 @@ class App extends Component {
     return (
       <div className="app">
         <header className="header">
-          <h1 className="title">Airline Routes</h1>
+          <h1 className="title">Flying - Airline Routes</h1>
         </header>
         <section>
+          <Map routes={selectedRoutes} airportClick={this.airportClick} />
           <p>
             Showing routes on 
             <Filter 
               options={filterAirlines}
-              value='id'
+              title='id'
               selected={this.state.airline}
               onSelect={this.selectAirline}
-              default='All Airlines'
+              allLabel='All Airlines'
             />
             at
             <Filter 
               options={filterAirports}
-              value='code'
+              title='code'
               selected={this.state.airport}
               onSelect={this.selectAirport}
-              default='All Airports'
+              allLabel='All Airports'
             />
             <button onClick={this.resetFilters}>
               Reset
@@ -120,7 +164,10 @@ class App extends Component {
             columns={columns} 
             rows={selectedRoutes}
             format={this.formatValue}
+            page={this.state.page}
             perPage={25}
+            prevClick={this.prevClick}
+            nextClick={this.nextClick}
           />
         </section>
       </div>
